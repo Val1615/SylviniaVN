@@ -9,7 +9,7 @@
   const C = window.SylviniaChronique;
   if (!D || !C) return;
 
-  const GAME_VERSION = 'v0.431';
+  const GAME_VERSION = 'v0.432';
   const STATE_KEY = 'tome1Chronicle';                     // capture versionnée, rangée à côté des flags (jamais dedans)
   const MIRROR_KEY = 'sylvinia_vn_chronique_tome1_v1';     // copie de la dernière chronique terminée (relectures de chapitre, Ma Chronique)
   const ROOT_ID = 'sylviniaGenerique';
@@ -272,6 +272,69 @@
 .gq-gate-actions button.ca:hover,.gq-gate-actions button.ca:focus-visible{border-color:rgba(205,175,255,.9);background:rgba(36,20,58,.55)}
 @media (max-height:560px){.gq-gate-card h2{font-size:clamp(26px,7vmin,44px)}.gq-gate-actions{margin-top:12px}}
 @media (prefers-reduced-motion:reduce){#${ROOT_ID} .gq-layer.vis .gq-img{animation:none}#${ROOT_ID} .gq-layer{transition-duration:.8s}}
+/* ==== Composition en trois couches : 01 course de Hylee, 02 illustrations, 03 texte et interface ==== */
+#${ROOT_ID}{isolation:isolate}
+.gq-course{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:#050407}
+.gq-bg{z-index:1;pointer-events:none}
+.gq-veil{z-index:2}.gq-motes{z-index:3}.gq-view{z-index:4}.gq-cartons{z-index:4}.gq-opening{z-index:5}
+.gq-curtain,.gq-prelude,.gq-launch{z-index:6}.gq-gate{z-index:7}.gq-paused,.gq-quick,.gq-ctrl,.gq-confirm{z-index:8}
+.gq-vid,.gq-still{position:absolute;inset:0;width:100%;height:100%;object-fit:var(--vfit,cover);object-position:var(--vpos,50% 62%);opacity:0;transition:opacity var(--xfade,1.4s) ease;pointer-events:none}
+.gq-vid.vis,.gq-still.vis{opacity:1}
+.gq-still{object-fit:cover;object-position:var(--focus,50% 45%);filter:saturate(.9) brightness(.82)}
+.gq-mist{position:absolute;inset:-10%;opacity:0;pointer-events:none;background:radial-gradient(ellipse 60% 45% at 50% 70%,rgba(214,206,190,.32) 0%,rgba(150,150,150,.12) 45%,rgba(0,0,0,0) 72%);transition:opacity calc(var(--xfade,1.4s) * .5) ease}
+.gq-mist.on{opacity:1}
+.gq-warm{position:absolute;inset:0;opacity:0;pointer-events:none;background:radial-gradient(ellipse 80% 70% at 50% 45%,rgba(255,214,150,.38) 0%,rgba(255,190,120,.14) 50%,rgba(0,0,0,0) 80%);mix-blend-mode:screen;transition:opacity 1.6s ease}
+.gq-warm.on{opacity:1}
+/* Course active : les illustrations deviennent des souvenirs latéraux, la course reste visible */
+#${ROOT_ID}.course-on{background:transparent}
+#${ROOT_ID}.course-on .gq-layer{inset:auto;top:5%;right:3%;width:40%;height:58%;opacity:0}
+#${ROOT_ID}.course-on .gq-layer.vis{opacity:var(--illus,.92)}
+#${ROOT_ID}.course-on .gq-fill{display:none}
+#${ROOT_ID}.course-on .gq-layer .gq-img{-webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 58%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 58%,transparent 100%);filter:saturate(.92) brightness(.9)}
+#${ROOT_ID}.course-on[data-cote="droite"] .gq-layer{right:auto;left:3%}
+#${ROOT_ID}.course-on .gq-veil{background:
+  linear-gradient(90deg,rgba(5,4,8,var(--v-texte,.72)) 0%,rgba(5,4,8,calc(var(--v-texte,.72) * .7)) 28%,rgba(5,4,8,calc(var(--v-texte,.72) * .25)) 46%,rgba(5,4,8,0) 60%),
+  linear-gradient(180deg,rgba(5,4,8,var(--v-haut,.4)) 0%,rgba(5,4,8,0) 20%,rgba(5,4,8,0) 82%,rgba(5,4,8,var(--v-bas,.28)) 100%)}
+#${ROOT_ID}.course-on.cartons-on .gq-veil{background:linear-gradient(180deg,rgba(5,4,8,var(--v-haut,.4)) 0%,rgba(5,4,8,.12) 30%,rgba(5,4,8,.12) 70%,rgba(5,4,8,var(--v-bas,.28)) 100%)}
+/* Portraits des faux crédits : buste détouré entier, ou carte aux bords estompés */
+#${ROOT_ID} .gq-layer.kind-sprite,#${ROOT_ID} .gq-layer.kind-carte{inset:auto;top:7%;right:5%;width:40%;height:72%}
+#${ROOT_ID} .gq-layer.kind-sprite .gq-fill,#${ROOT_ID} .gq-layer.kind-carte .gq-fill{display:none}
+#${ROOT_ID} .gq-layer.kind-sprite .gq-img,#${ROOT_ID} .gq-layer.kind-carte .gq-img{top:0;height:100%}
+#${ROOT_ID} .gq-layer.kind-sprite .gq-img{object-fit:contain;object-position:50% 100%;filter:drop-shadow(0 10px 26px rgba(0,0,0,.6)) brightness(.95);-webkit-mask-image:linear-gradient(180deg,#000 72%,transparent 100%);mask-image:linear-gradient(180deg,#000 72%,transparent 100%)}
+#${ROOT_ID} .gq-layer.kind-carte .gq-img{-webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 55%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 55%,transparent 100%)}
+#${ROOT_ID} .gq-layer.kind-sprite.vis .gq-img,#${ROOT_ID} .gq-layer.kind-carte.vis .gq-img{animation:none}
+#${ROOT_ID}.course-on .gq-layer.kind-sprite,#${ROOT_ID}.course-on .gq-layer.kind-carte{top:6%;right:6%;width:36%;height:62%}
+/* Acte I : cartons individuels, côtés alternés */
+.gq-cartons{position:absolute;inset:0;pointer-events:none}
+.gq-carton{position:absolute;top:24%;max-width:min(42%,30rem);padding:0 2vw;opacity:0;transform:translateY(6px);transition:opacity var(--c-out,.7s) ease,transform var(--c-out,.7s) ease;text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 22px rgba(0,0,0,.65)}
+.gq-carton.on{opacity:1;transform:none;transition:opacity var(--c-in,.8s) ease,transform var(--c-in,.8s) ease}
+.gq-carton.gauche{left:max(6%,env(safe-area-inset-left));text-align:left}
+.gq-carton.droite{right:max(6%,env(safe-area-inset-right));text-align:right}
+.gq-carton.centre{left:50%;top:50%;transform:translate(-50%,-46%);max-width:min(88%,40rem);text-align:center}
+.gq-carton.centre.on{transform:translate(-50%,-50%)}
+.gq-carton .gq-c-role{display:block;font:600 clamp(12px,1.9vmin,17px)/1.3 "Cinzel",Georgia,serif;letter-spacing:.28em;text-transform:uppercase;color:rgba(233,201,133,.86)}
+.gq-carton .gq-c-name{display:block;margin-top:.35em;font:600 clamp(30px,6vmin,62px)/1.05 "Cormorant Garamond",Georgia,serif;color:#fff4d6;letter-spacing:.01em}
+.gq-carton .gq-c-titre{display:block;font:700 clamp(28px,5.6vmin,64px)/1.08 "Cinzel Decorative","Cinzel",Georgia,serif;color:#f3dca2}
+.gq-carton .gq-c-un{display:block;font:600 clamp(14px,2.4vmin,22px)/1 "Cinzel",Georgia,serif;letter-spacing:.5em;text-indent:.5em;text-transform:uppercase;color:rgba(233,201,133,.86)}
+.gq-carton .gq-c-big{display:block;margin-top:.3em;font:900 clamp(30px,7vmin,78px)/1.04 "Cinzel Decorative","Cinzel",Georgia,serif;letter-spacing:.04em;text-transform:uppercase;color:#f6e0a4}
+#${ROOT_ID}.portrait .gq-carton{top:16%;max-width:80%}
+#${ROOT_ID}.portrait .gq-carton.centre{top:42%}
+/* Portrait · Au-delà des cendres, avec la course */
+#${ROOT_ID}.portrait.course-on .gq-layer{top:2%;left:7%;right:7%;width:auto;height:26%}
+#${ROOT_ID}.portrait.course-on .gq-layer.kind-sprite,#${ROOT_ID}.portrait.course-on .gq-layer.kind-carte{top:2%;left:26%;right:26%;width:auto;height:26%}
+#${ROOT_ID}.portrait.course-on .gq-layer .gq-img{top:0;height:100%}
+#${ROOT_ID}.portrait.course-on .gq-view{top:27%;bottom:14%}
+#${ROOT_ID}.portrait.course-on .gq-veil{background:radial-gradient(ellipse 110% 60% at 50% 46%,rgba(5,4,8,var(--v-centre,.5)) 0%,rgba(5,4,8,calc(var(--v-centre,.5) * .55)) 60%,rgba(5,4,8,.15) 100%),linear-gradient(180deg,rgba(5,4,8,var(--v-haut,.42)) 0%,rgba(5,4,8,0) 18%,rgba(5,4,8,0) 80%,rgba(5,4,8,var(--v-bas,.3)) 100%)}
+#${ROOT_ID}.portrait.course-on.cartons-on .gq-veil{background:linear-gradient(180deg,rgba(5,4,8,var(--v-haut,.42)) 0%,rgba(5,4,8,.2) 35%,rgba(5,4,8,.08) 75%,rgba(5,4,8,var(--v-bas,.3)) 100%)}
+#${ROOT_ID}.portrait .gq-layer.kind-sprite,#${ROOT_ID}.portrait .gq-layer.kind-carte{top:4%;left:20%;right:20%;width:auto;height:40%}
+/* Finale · Le dernier sourire : seules restent la course et la lumière */
+#${ROOT_ID}.finale .gq-bg,#${ROOT_ID}.finale .gq-veil,#${ROOT_ID}.finale .gq-view,#${ROOT_ID}.finale .gq-motes,#${ROOT_ID}.finale .gq-cartons{opacity:0;transition:opacity 2s ease}
+#${ROOT_ID}.finale .gq-quick{opacity:0}
+#${ROOT_ID}.finale.ctrl .gq-quick{opacity:.92}
+#${ROOT_ID}.gate .gq-course{opacity:0;transition:opacity 1.6s ease}
+#${ROOT_ID}.prelude .gq-course{opacity:0}
+.gq-course{transition:opacity 2.4s ease}
+#${ROOT_ID}.cartons-on:not(.course-on) .gq-veil{background:radial-gradient(ellipse 80% 70% at 50% 45%,rgba(5,4,8,.55) 0%,rgba(5,4,8,.72) 70%,rgba(5,4,8,.88) 100%)}
 `;
   const ORN = (cls) => `<svg class="${cls}" viewBox="0 0 320 18" aria-hidden="true"><path d="M2 9h118M200 9h118" stroke="currentColor" stroke-width=".8" fill="none"/><path d="M128 9c10-8 22-8 32 0c10 8 22 8 32 0M128 9c10 8 22 8 32 0c10-8 22-8 32 0" stroke="currentColor" stroke-width=".9" fill="none"/><path d="M160 3l3 6-3 6-3-6z" fill="currentColor"/><circle cx="120" cy="9" r="1.6" fill="currentColor"/><circle cx="200" cy="9" r="1.6" fill="currentColor"/></svg>`;
 
@@ -290,7 +353,8 @@
     const list = Array.isArray(bg) ? bg : [bg];
     const srcs = list.map((b) => (typeof b === 'string' ? b : b.src)).filter(Boolean).slice(0, 3);
     const focus = (typeof list[0] === 'object' && list[0].focus) || '';
-    return ` data-bg="${esc(srcs.join('|'))}" data-focus="${esc(focus)}"`;
+    const kind = (typeof list[0] === 'object' && list[0].kind) || '';
+    return ` data-bg="${esc(srcs.join('|'))}" data-focus="${esc(focus)}"${kind ? ` data-kind="${esc(kind)}"` : ''}`;
   };
   const item = (it) => {
     switch (it.type) {
@@ -359,7 +423,7 @@
         continue;
       }
       for (const b of act.blocks) {
-        parts.push(`<section class="gq-block${b.final ? ' gq-final' : ''}" data-id="${b.id}"${bgAttr(b.bg)}${b.final ? ' data-final="1"' : ''} style="--gap:${b.final ? 24 : 15}vh">${b.items.map(item).join('')}</section>`);
+        parts.push(`<section class="gq-block${b.final ? ' gq-final' : ''}" data-id="${b.id}"${bgAttr(b.bg)}${b.final ? ' data-final="1"' : ''} style="--gap:${b.gap || (b.final ? 24 : 15)}vh">${b.items.map(item).join('')}</section>`);
       }
     }
     if (mode === 'chronique') parts.push(`<section class="gq-block gq-final" data-id="chronique-retour" data-final="1" style="--gap:30vh">${ORN('gq-sep')}<span class="gq-suite">Ma Chronique</span></section>`);
@@ -402,10 +466,12 @@
     root.setAttribute('aria-label', mode === 'chronique' ? 'Ma Chronique' : 'Générique de fin du Tome I');
     const op = D.opening;
     root.innerHTML = `
+      <div class="gq-course" aria-hidden="true"><video class="gq-vid" muted playsinline preload="none" disablepictureinpicture></video><video class="gq-vid" muted playsinline preload="none" disablepictureinpicture></video><img class="gq-still" alt=""><div class="gq-mist"></div><div class="gq-warm"></div></div>
       <div class="gq-bg"><div class="gq-layer"><div class="gq-fill"></div><img class="gq-img" alt="" decoding="async"></div><div class="gq-layer"><div class="gq-fill"></div><img class="gq-img" alt="" decoding="async"></div></div>
       <div class="gq-veil"></div>
       <canvas class="gq-motes" aria-hidden="true"></canvas>
       <div class="gq-view" aria-live="off"><div class="gq-strip">${buildStrip(chronicle, mode)}</div></div>
+      ${mode === 'generique' && D.cartons ? cartonsHtml() : ''}
       <div class="gq-opening">${ORN('gq-orn top')}<p class="gq-o1">${esc(op.line1)}</p><h1 class="gq-o2">${esc(op.title)}</h1><p class="gq-o3">${esc(mode === 'chronique' ? 'Ma Chronique' : op.tome)}</p>${ORN('gq-orn')}</div>
       <div class="gq-curtain" aria-hidden="true"></div>
       <div class="gq-prelude" aria-live="polite">${(D.prelude && mode === 'generique' ? D.prelude.lines : []).map((l) => `<p>${esc(l)}</p>`).join('')}</div>
@@ -426,16 +492,22 @@
     return root;
   }
 
+  function cartonsHtml() {
+    const c = D.cartons; const n = esc(c.name);
+    return `<div class="gq-cartons" aria-live="polite"><div class="gq-carton centre" data-k="titre"><span class="gq-c-titre">${esc(c.title)}</span>${ORN('gq-sep')}</div>${c.items.map((it, i) => `<div class="gq-carton ${it.side === 'droite' ? 'droite' : 'gauche'}" data-k="${i}"><span class="gq-c-role">${esc(it.role)}</span><span class="gq-c-name">${n}</span></div>`).join('')}<div class="gq-carton centre" data-k="final"><span class="gq-c-un">${esc(c.final.lines[0])}</span><span class="gq-c-big">${esc(c.final.lines[1])}</span></div></div>`;
+  }
+
   function layout() {
     const p = P; if (!p) return;
     p.root.classList.toggle('portrait', p.orient === 'portrait');
     p.root.classList.toggle('lite', lite());
     p.viewH = p.view.clientHeight || window.innerHeight;
     p.speed = baseSpeed(p);
-    p.blocks = [...p.strip.querySelectorAll('.gq-block')].map((el) => ({ el, id: el.dataset.id, top: el.offsetTop, h: el.offsetHeight, bg: el.dataset.bg, focus: el.dataset.focus, final: el.dataset.final === '1' }));
+    p.blocks = [...p.strip.querySelectorAll('.gq-block')].map((el) => ({ el, id: el.dataset.id, top: el.offsetTop, h: el.offsetHeight, bg: el.dataset.bg, focus: el.dataset.focus, kind: el.dataset.kind || '', final: el.dataset.final === '1' }));
     const fin = p.blocks.find((b) => b.final) || p.blocks[p.blocks.length - 1];
     p.stopAt = fin ? fin.top + fin.h / 2 + p.viewH / 2 : p.viewH;
     p.reading = p.viewH * 0.56;
+    courseLayout();
     sizeMotes();
   }
   const screenTop = (b) => P.viewH - P.offset + b.top;
@@ -469,7 +541,7 @@
     if (loaded.size > 14) { const first = loaded.keys().next().value; loaded.delete(first); } // libère les anciens médias
     return pr;
   }
-  function showBg(src, focus) {
+  function showBg(src, focus, kind = '') {
     const p = P; if (!p) return;
     if (src === p.bgSrc) return;
     const token = ++p.bgToken;
@@ -482,6 +554,7 @@
       else { img.removeAttribute('src'); img.style.visibility = 'hidden'; fill.style.backgroundImage = 'none'; }
       // relance la dérive de caméra
       img.style.animation = 'none'; void img.offsetWidth; img.style.animation = '';
+      next.classList.toggle('kind-sprite', kind === 'sprite'); next.classList.toggle('kind-carte', kind === 'carte');
       next.classList.add('vis'); cur.classList.remove('vis');
       p.bgIdx ^= 1; p.bgSrc = src; p.bgSince = p.clock;
     };
@@ -502,9 +575,142 @@
       const per = Math.max(7, target.h / p.speed / list.length);
       src = list[Math.min(list.length - 1, Math.floor((p.clock - since) / per))];
     }
-    showBg(src, target.focus);
+    showBg(src, target.focus, target.kind);
     // précharge le petit groupe suivant
     for (const b of p.blocks.slice(idx + 1, idx + 4)) if (b.bg) b.bg.split('|').slice(0, 1).forEach(preload);
+  }
+
+  /* ---- Couche 01 : la course de Hylee (deux lecteurs au plus, jamais relancés, muets) ---- */
+  const K = D.course || null;
+  const courseEnabled = () => Boolean(K && K.clips) && !reducedMotion() && !(navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2);
+  function courseInit(p) {
+    const vids = [...p.root.querySelectorAll('.gq-vid')];
+    p.course = { vids, active: -1, clip: '', idx: -1, pending: '', since: -99, missing: new Set(), cues: [], on: false, enabled: courseEnabled() };
+    vids.forEach((v) => { v.muted = true; v.defaultMuted = true; v.volume = 0; v.playsInline = true; v.setAttribute('muted', ''); });
+    const root = p.root.style; const tm = (K && K.timing) || {};
+    root.setProperty('--xfade', (tm.crossfade || 1.4) + 's');
+    if (p.course.enabled) courseGo(p.mode === 'chronique' ? (K.order[1] || K.order[0]) : K.order[0]);
+  }
+  function courseLayout() {
+    const p = P; if (!p || !p.course || !K) return;
+    const o = p.orient === 'portrait' ? 'portrait' : 'paysage';
+    const clipCad = (K.clips[p.course.clip] && K.clips[p.course.clip].cadrage && K.clips[p.course.clip].cadrage[o]) || {};
+    const cad = { ...(K.cadrage && K.cadrage[o]), ...clipCad };
+    const st = p.root.style;
+    if (cad.position) st.setProperty('--vpos', cad.position);
+    if (cad.fit) st.setProperty('--vfit', cad.fit);
+    const v = (K.voiles && K.voiles[o]) || {};
+    for (const [k, val] of Object.entries(v)) st.setProperty('--v-' + k, String(val));
+    if (K.voiles && K.voiles.illustrations != null) st.setProperty('--illus', String(K.voiles.illustrations));
+    // positions des ancres dans la bande
+    const top = (id) => { const b = p.blocks.find((x) => x.id === id); return b ? b.top : null; };
+    const c0 = top('chronique-intro'), c1 = top('chronique-fin');
+    p.course.cues = (K.cues || []).map((cue) => {
+      let pos = null;
+      if (cue.block) pos = top(cue.block);
+      else if (cue.chronique != null && c0 != null && c1 != null) pos = c0 + (c1 - c0) * cue.chronique;
+      return pos == null ? null : { idx: K.order.indexOf(cue.clip), pos };
+    }).filter((x) => x && x.idx >= 0);
+  }
+  function loadInto(v, id) {
+    return new Promise((res) => {
+      const clip = K.clips[id]; if (!clip || !clip.src) { res(false); return; }
+      let done = false;
+      const end = (ok) => { if (done) return; done = true; clearTimeout(to); v.removeEventListener('loadeddata', onOk); v.removeEventListener('error', onErr); res(ok); };
+      const onOk = () => end(true), onErr = () => end(false);
+      const to = setTimeout(() => end(v.readyState >= 2), ((K.timing && K.timing.loadTimeout) || 8) * 1000);
+      v.addEventListener('loadeddata', onOk); v.addEventListener('error', onErr);
+      v.loop = clip.loop !== false; v.muted = true; v.preload = 'auto';
+      v.dataset.clip = id; v.src = clip.src;
+      try { v.load(); } catch (_e) { end(false); }
+    });
+  }
+  function playVid(v) { const p = P; if (!p || !v || p.paused || document.hidden) return; try { const pr = v.play(); if (pr) pr.catch(() => {}); } catch (_e) { /* autoplay refusé : repli par illustrations */ } }
+  function courseGo(id, opts = {}) {
+    const p = P; const c = p && p.course; if (!c || !c.enabled) return Promise.resolve(false);
+    if (c.missing.has(id) || c.clip === id || c.pending === id) return Promise.resolve(c.clip === id);
+    const slot = c.active < 0 ? 0 : c.active ^ 1;
+    const v = c.vids[slot], old = c.active >= 0 ? c.vids[c.active] : null;
+    c.pending = id;
+    const ready = (v.dataset.clip === id && v.readyState >= 2) ? Promise.resolve(true) : loadInto(v, id);
+    return ready.then((ok) => {
+      if (!P || P.course !== c || c.pending !== id) return false;
+      c.pending = '';
+      if (!ok) { c.missing.add(id); try { v.removeAttribute('src'); v.load(); } catch (_e) { /* ignore */ } console.warn('[Sylvinia] Générique : vidéo absente ou illisible', id, K.clips[id] && K.clips[id].src); return false; }
+      try { v.currentTime = 0; } catch (_e) { /* ignore */ }
+      v.loop = K.clips[id].loop !== false;
+      if (opts.fade) v.style.setProperty('--xfade', opts.fade + 's'); else v.style.removeProperty('--xfade');
+      playVid(v);
+      const mist = p.root.querySelector('.gq-mist');
+      if (old && mist) { mist.classList.add('on'); setTimeout(() => mist.classList.remove('on'), ((K.timing && K.timing.crossfade) || 1.4) * 700); }
+      v.classList.add('vis');
+      if (old) {
+        old.classList.remove('vis');
+        setTimeout(() => { if (old.classList.contains('vis')) return; try { old.pause(); old.removeAttribute('src'); old.load(); delete old.dataset.clip; } catch (_e) { /* ignore */ } }, ((opts.fade || (K.timing && K.timing.crossfade) || 1.4) + 0.4) * 1000);
+      }
+      c.active = slot; c.clip = id; c.since = p.clock;
+      if (K.order.includes(id)) c.idx = K.order.indexOf(id);
+      c.on = true; p.root.classList.add('course-on');
+      courseLayout();
+      return true;
+    });
+  }
+  // Précharge un clip dans le lecteur libre (V06 pendant le dernier carton).
+  function coursePreload(id) {
+    const p = P; const c = p && p.course; if (!c || !c.enabled || c.pending || c.missing.has(id) || c.clip === id) return;
+    const v = c.vids[c.active < 0 ? 0 : c.active ^ 1];
+    if (v.dataset.clip !== id) loadInto(v, id).then((ok) => { if (!ok && P && P.course === c) c.missing.add(id); });
+  }
+  function courseTick() {
+    const p = P; const c = p && p.course; if (!c || !c.enabled || c.pending) return;
+    let target = p.mode === 'chronique' ? 1 : 0;
+    if (p.phase === 'strip' || p.phase === 'hold') for (const cue of c.cues) if (p.viewH - p.offset + cue.pos <= p.reading) target = Math.max(target, cue.idx);
+    if (target <= c.idx) return;
+    if (c.idx >= 0 && p.clock - c.since < ((K.timing && K.timing.minClip) || 14)) return;
+    // une étape à la fois, sans retour en arrière ; un clip absent est sauté
+    let next = c.idx + 1;
+    while (next <= target && c.missing.has(K.order[next])) next += 1;
+    if (next > target) { c.idx = target; return; }
+    courseGo(K.order[next]).then((ok) => { if (!ok && P && P.course === c && c.idx < next) c.idx = Math.max(c.idx, next - 1); });
+  }
+  function courseSetPaused(on) {
+    const p = P; const c = p && p.course; if (!c) return;
+    const v = c.active >= 0 ? c.vids[c.active] : null; if (!v) return;
+    if (on) { try { v.pause(); } catch (_e) { /* ignore */ } } else playVid(v);
+  }
+  function courseStop(p) {
+    const c = p && p.course; if (!c) return;
+    c.vids.forEach((v) => { try { v.pause(); v.removeAttribute('src'); v.load(); } catch (_e) { /* ignore */ } });
+    c.enabled = false; c.on = false;
+  }
+  /* ---- Finale · Le dernier sourire : V06 seule, une fois, sans illustrations ni texte ---- */
+  function startFinale() {
+    const p = P; if (!p) return;
+    p.phase = 'finale';
+    askSkip(false);
+    p.root.classList.add('finale');
+    const tm = K.timing || {};
+    p.finaleDeadline = p.clock + (tm.finaleMax || 20);
+    const warm = p.root.querySelector('.gq-warm');
+    if (warm) { warm.classList.add('on'); setTimeout(() => warm.classList.remove('on'), (tm.finaleIn || 2.4) * 1000); }
+    const fallback = () => {
+      if (!P || P !== p) return;
+      const still = p.root.querySelector('.gq-still');
+      const r = K.repli;
+      if (still && r && r.src) { still.src = r.src; still.style.setProperty('--focus', r.focus || '50% 45%'); still.classList.add('vis'); }
+      p.root.querySelectorAll('.gq-vid.vis').forEach((v) => v.classList.remove('vis'));
+      p.finaleEnd = p.clock + (tm.fallbackHold || 5);
+      p.finaleDegraded = true;
+    };
+    const c = p.course;
+    if (!c || !c.enabled || c.missing.has('V06')) { fallback(); return; }
+    courseGo('V06', { fade: tm.finaleIn || 2.4 }).then((ok) => {
+      if (!P || P !== p) return;
+      if (!ok) { fallback(); return; }
+      const v = c.vids[c.active];
+      v.addEventListener('ended', () => { if (P === p && p.phase === 'finale') { p.finaleEnd = p.clock + (tm.finaleHold || 1.2); fadeGain(0.55, 1400); } }, { once: true });
+      p.finaleDeadline = p.clock + Math.max(tm.finaleMax || 20, (Number.isFinite(v.duration) ? v.duration : 0) + 4);
+    });
   }
 
   /* ---- Cendres et poussières ---- */
@@ -539,7 +745,9 @@
       p.clock += dt * k;
       if (p.phase === 'prelude') stepPrelude();
       else if (p.phase === 'opening') {
-        if (p.clock >= p.openEnd) startStrip();
+        if (p.clock >= p.openEnd) { if (p.mode === 'generique' && D.cartons && p.root.querySelector('.gq-cartons')) startCartons(); else startStrip(); }
+      } else if (p.phase === 'cartons') {
+        stepCartons();
       } else if (p.phase === 'strip') {
         p.offset = Math.min(p.stopAt, p.offset + p.speed * dt);
         paintStrip();
@@ -547,15 +755,55 @@
         if (p.offset >= p.stopAt) { p.phase = 'hold'; p.holdEnd = p.clock + T.finalHold; }
       } else if (p.phase === 'hold') {
         syncBg();
-        if (p.clock >= p.holdEnd) finish('fin');
+        if (!p.finalePreloaded && p.mode === 'generique') { p.finalePreloaded = true; coursePreload('V06'); }
+        if (p.clock >= p.holdEnd) { if (p.mode === 'generique' && D.course) startFinale(); else finish('fin'); }
+      } else if (p.phase === 'finale') {
+        if ((p.finaleEnd && p.clock >= p.finaleEnd) || p.clock >= p.finaleDeadline) finish('fin');
       }
+      if (p.phase !== 'prelude' && p.phase !== 'finale' && p.phase !== 'gate') courseTick();
     }
     drawMotes(running ? dt : 0);
     p.raf = requestAnimationFrame(frame);
   }
+  /* ---- Acte I : cartons individuels (horloge commune, pause comprise) ---- */
+  function startCartons() {
+    const p = P; if (!p) return;
+    p.opening.classList.add('gone');
+    p.phase = 'cartons'; p.cartStart = p.clock;
+    const c = D.cartons, t = c.timing;
+    const box = p.root.querySelector('.gq-cartons');
+    box.style.setProperty('--c-in', t.fadeIn + 's'); box.style.setProperty('--c-out', t.fadeOut + 's');
+    const els = [...box.querySelectorAll('.gq-carton')];
+    let at = T.openingOut * 0.6; const sched = [];
+    const add = (el, hold, item) => { sched.push({ el, start: at, out: at + t.fadeIn + hold, end: at + t.fadeIn + hold + t.fadeOut, item }); at += t.fadeIn + hold + t.fadeOut + t.gap; };
+    add(els[0], t.titleHold, null);
+    c.items.forEach((it, i) => add(els[i + 1], t.hold, it));
+    add(els[els.length - 1], t.finalHold, null);
+    p.cartons = { sched, total: at + t.breath };
+    p.root.classList.add('cartons-on');
+  }
+  function stepCartons() {
+    const p = P; if (!p || !p.cartons) return;
+    const t = p.clock - p.cartStart;
+    for (const s of p.cartons.sched) {
+      const on = t >= s.start && t < s.out;
+      if (on && !s.el.classList.contains('on')) {
+        s.el.classList.add('on');
+        if (s.item) {
+          p.root.dataset.cote = s.item.side === 'droite' ? 'droite' : 'gauche';
+          // sur la course, le carton reste seul face à Hylee ; sans vidéo, l’illustration du carton sert de fond
+          if (p.course && p.course.on) showBg('', ''); else if (s.item.bg) showBg(s.item.bg.src, s.item.bg.focus);
+        }
+        else if (s.el.dataset.k === 'final') showBg('', '');
+      } else if (!on && s.el.classList.contains('on')) s.el.classList.remove('on');
+    }
+    if (t >= p.cartons.total) startStrip();
+  }
   function startStrip() {
     const p = P; if (!p) return;
     p.opening.classList.add('gone');
+    p.root.classList.remove('cartons-on'); delete p.root.dataset.cote;
+    p.root.querySelectorAll('.gq-carton.on').forEach((el) => el.classList.remove('on'));
     p.phase = 'strip'; p.started = true; p.offset = 0;
     layout(); paintStrip();
   }
@@ -612,6 +860,8 @@
     const v = gate.querySelector('video');
     if (v) { v.muted = true; v.addEventListener('error', () => v.remove(), true); try { const pl = v.play(); if (pl) pl.catch(() => {}); } catch (_e) { /* l’affiche reste */ } }
     requestAnimationFrame(() => P && P.root.classList.add('gate'));
+    setTimeout(() => { if (P === p) courseStop(p); }, 1800);
+    if (p.musicStarted && p.gain < 1) fadeGain(1, 1800);
     setTimeout(() => { const b = P && P.root.querySelector('[data-gq="gate-menu"]'); if (b) b.focus({ preventScroll: true }); }, 700);
     if (!p.musicStarted) startMusic();
   }
@@ -642,6 +892,7 @@
   function setPaused(on) {
     const p = P; if (!p) return;
     p.paused = on; p.root.classList.toggle('paused', on);
+    courseSetPaused(on);
     const b = p.root.querySelector('[data-gq="pause"]'); if (b) b.textContent = on ? 'Reprendre' : 'Pause';
     const m = musicEl();
     if (on) { p.musicWasPlaying = !!(m && !m.paused); if (p.musicWasPlaying) try { m.pause(); } catch (_e) { /* déjà en pause */ } }
@@ -666,7 +917,7 @@
   }
   function jumpTo(actId) {
     const p = P; if (!p) return;
-    if (p.phase === 'opening') { p.clock = p.openEnd; startStrip(); }
+    if (p.phase === 'opening' || p.phase === 'cartons') { p.clock = Math.max(p.clock, p.openEnd); startStrip(); }
     const blk = p.blocks.find((x) => x.el.dataset.act === actId); if (!blk) return;
     p.phase = 'strip'; p.offset = Math.min(p.stopAt, blk.top + p.viewH - p.reading); p.bgSince = -99; paintStrip(); syncBg();
   }
@@ -677,7 +928,7 @@
     else if (ev.key === 'Escape' || ev.key === 'Esc') { ev.preventDefault(); ev.stopPropagation(); askSkip(P.confirm.hidden); }
     else { ev.stopPropagation(); }
   }
-  function onVisibility() { if (P) P.last = performance.now(); }
+  function onVisibility() { if (!P) return; P.last = performance.now(); courseSetPaused(document.hidden || P.paused); }
   let resizeT = 0;
   function onResize() { clearTimeout(resizeT); resizeT = setTimeout(relayout, 140); }
 
@@ -693,7 +944,10 @@
       prevMusicKey: (musicEl() && musicEl().dataset.currentKey) || '', prevMusicPaused: !musicEl() || musicEl().paused,
     };
     P.openEnd = T.openingIn + T.openingHold + (mode === 'chronique' ? -1.5 : 0);
+    courseInit(P);
     layout();
+    // sans vidéo lisible (absente, mouvement réduit) : le titre et les cartons gardent un fond illustré
+    if (K && K.repliOuverture) setTimeout(() => { const q = P; if (q && q.root === root && !(q.course && q.course.on) && !q.bgSrc) showBg(K.repliOuverture.src, K.repliOuverture.focus); }, 2500);
     paintStrip();
     root.addEventListener('click', onClick);
     root.addEventListener('pointermove', poke, { passive: true });
@@ -735,6 +989,7 @@
     window.removeEventListener('resize', onResize);
     window.removeEventListener('orientationchange', onResize);
     clearTimeout(p.ctrlT); stopFade();
+    courseStop(p);
     const v = p.root.querySelector('.gq-gate video'); if (v) { try { v.pause(); v.removeAttribute('src'); v.load(); } catch (_e) { /* ignore */ } }
     p.root.remove();
     P = null;
@@ -880,7 +1135,7 @@
   }
 
   const update = document.querySelector('.menuUpdateBubble');
-  if (update) update.textContent = 'Mise à jour · ' + GAME_VERSION + ' · Générique : votre chronique complète';
+  if (update) update.textContent = 'Mise à jour · ' + GAME_VERSION + ' · Générique : la course de Hylee';
 
   window.SylviniaGenerique = {
     version: GAME_VERSION,
@@ -895,7 +1150,7 @@
     jouer: (opts = {}) => open(opts.mode || 'generique', opts.chronicle || currentChronicle(), opts) && (startMusic(), true),
     apercu: () => makeCapture('apercu'),
     parcours: () => readTrail(),
-    etat: () => P && { mode: P.mode, phase: P.phase, offset: Math.round(P.offset), stopAt: Math.round(P.stopAt), clock: +P.clock.toFixed(2), orient: P.orient, paused: P.paused, bg: P.bgSrc, anchor: anchorNow(), speed: P.speed },
+    etat: () => P && { mode: P.mode, phase: P.phase, offset: Math.round(P.offset), stopAt: Math.round(P.stopAt), clock: +P.clock.toFixed(2), orient: P.orient, paused: P.paused, bg: P.bgSrc, anchor: anchorNow(), speed: P.speed, course: P.course && { on: P.course.on, clip: P.course.clip, pending: P.course.pending, manquantes: [...P.course.missing], active: P.course.enabled }, finaleDegradee: Boolean(P.finaleDegraded) },
     vitesse: (n = 1) => { if (P) { P.devSpeed = n; P.speed = baseSpeed(P); } },
     accelerer: (on = true) => setFast(on),
     passer: () => finish('passe'),

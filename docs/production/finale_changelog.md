@@ -1,5 +1,19 @@
 # Journal · Final du Tome I
 
+## v0.432 (branche `feat/generique-course-hylee`)
+
+Consigne de l’auteur « Évolution du générique de fin du Tome I » (détails : `generique_course_hylee.md`).
+
+- Composition en trois couches : course de Hylee en vidéo plein écran permanente, illustrations par-dessus (latérales, bords estompés), texte et interface au premier plan.
+- Six vidéos de l’auteur intégrées à l’identique (sha256 vérifié) dans `assets/video/generique/` : V01 forêts humaines, V02 forêts sylviniennes, V03 Mir’Aldas, V04 Forêt Interdite, V05 champ de bataille, V06 dernier sourire. Muettes dans le lecteur.
+- Acte I « À l’origine des Chroniques » : huit cartons individuels, alternés gauche/droite, puis « Un jeu du Chroniqueur Vagabond ». Pseudonyme seul.
+- Acte II « Avec la participation de… » : douze faux crédits avec portraits authentiques du jeu, puis « Et bien évidemment… Vous ».
+- Votre Chronique, vrais crédits et mot de l’auteur inchangés (renumérotés III à V).
+- Finale « Le dernier sourire » : V06 seule, une fois, sans texte, puis la passerelle habituelle.
+- Rotation sans relance, pause et reprise synchronisées, replis propres (clip absent, aucune vidéo, V06 absente).
+- Scénario, routes, choix, combats, sauvegardes `sylvinia_vn_v82`, CA et Studio inchangés.
+- Bulle de mise à jour : « v0.432 · Générique : la course de Hylee ».
+
 ## v0.431 (branche `feat/generique-choix-marquants`)
 
 Retours de l’auteur sur le générique v0.430 (≈ 11 min à ×1).

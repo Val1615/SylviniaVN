@@ -264,7 +264,7 @@
   }
 
   const update = document.querySelector('.menuUpdateBubble');
-  if (update) update.textContent = 'Mise à jour · v0.431 · Ma Chronique et générique de fin';
+  if (update) update.textContent = 'Mise à jour · v0.432 · Générique : la course de Hylee';
 
   window.SylviniaFinaleCinema = {
     src: SRC,
