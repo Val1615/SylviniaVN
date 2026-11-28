@@ -1,5 +1,15 @@
 # Journal · Final du Tome I
 
+## v0.434 (branche `feat/generique-illus-fondu`)
+
+Retour de l’auteur sur les illustrations v0.433, trop franches, « posées » sur la course.
+
+- Juste milieu : souvenirs à environ 38 % de la largeur en paysage, bandeau haut en portrait, un peu plus discrets que le grand panneau de la v0.433, nettement plus présents que la vignette de la v0.432.
+- Contours très fondus (masque elliptique progressif jusqu’à la transparence, aucun bord net), légère transparence, pour que l’image émerge de la course comme un souvenir.
+- Visages et action restent lisibles ; Hylee n’est pas masquée. Boutons d’accélération et de passage inchangés.
+- Scénario, routes, choix, combats, sauvegardes `sylvinia_vn_v82`, CA et Studio inchangés.
+- Bulle de mise à jour : « v0.434 · Générique : souvenirs fondus dans la course ».
+
 ## v0.433 (branche `feat/generique-musique`)
 
 Thème original de l’auteur pour le générique de fin du Tome I, à la place de la musique du menu.

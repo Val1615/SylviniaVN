@@ -58,8 +58,8 @@ Elle commence avec le titre frontal (préchargée pendant le prélude) et accomp
 À la fin de V06, le thème du générique s’éteint. À la passerelle, le thème du menu reprend, sans double lecture. Si la musique est désactivée, aucun son n’est imposé, y compris la piste vidéo. Pause et reprise restent synchronisées. Tous les réglages sont dans `fusion/story-generique-credits.js` (`track` et `music`).
 
 
-## Illustrations et stabilité (v0.433)
+## Illustrations et stabilité (v0.433–v0.434)
 
-En paysage, les souvenirs occupent près de la moitié de la largeur, à droite, autour de Hylee, avec des bords estompés. En portrait, ils prennent un bandeau haut plus généreux, le texte restant en dessous. Tant que la course est visible, les petites vignettes du défilement sont masquées pour éviter le double emploi.
+En paysage, les souvenirs occupent environ 38 % de la largeur, à droite, autour de Hylee. En portrait, un bandeau haut. Un masque elliptique très progressif fond l’image dans la course, sans bord net, avec une légère transparence, pour qu’elle émerge comme un souvenir. Tant que la course est visible, les petites vignettes du défilement sont masquées pour éviter le double emploi.
 
 Les boucles V01 à V05 se raccordent par un fondu entre les deux lecteurs, pour éviter le flash d’une reprise native. Un changement d’orientation ne bascule que hors d’une zone morte autour du format carré (écran de Fold déplié).

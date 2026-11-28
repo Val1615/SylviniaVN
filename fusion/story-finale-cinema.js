@@ -264,7 +264,7 @@
   }
 
   const update = document.querySelector('.menuUpdateBubble');
-  if (update) update.textContent = 'Mise à jour · v0.433 · Générique : le thème de la course de Hylee';
+  if (update) update.textContent = 'Mise à jour · v0.434 · Générique : souvenirs fondus dans la course';
 
   window.SylviniaFinaleCinema = {
     src: SRC,
